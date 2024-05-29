@@ -1,70 +1,37 @@
-# Getting Started with Create React App
+![Homepage Screenshot](src/assets/img/icon.png)
+# CareerPath
+Description
+CareerPath is an online platform that facilitates connections between students, educational institutions, and companies. Users can follow available educational programs and career opportunities, gaining insights into career development paths.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Users
+### Students: Want to explore career opportunities and get advice.
+### Educational Institutions: Want to offer their programs and connect with employers.
+### Companies: Looking for new talent and want to promote opportunities.
+Key Features
+Program Tracking
+Students can browse available educational programs and apply for their desired field.
 
-## Available Scripts
+## Networking
+The platform enables connections between students and potential employers and mentors.
 
-In the project directory, you can run:
+## Build for success
+The application offers advice on job searching, resume writing, interviews, and other crucial aspects of career development.
 
-### `npm start`
+## Architecture
+Registration and Login - via Firebase
+Firebase Authentication: Used for user registration and login.
+Firestore: Used to store user data and application information.
+### Platform Components
+User Interface: Built with React, providing an interactive and responsive design.
+Backend Services: Managed via Firebase, including authentication and Firestore for data storage.
+### Working Methods
+React Components: Modular and reusable components for building the user interface.
+Firebase Integration: Real-time database and authentication services to manage user data and application state.
+Firestore Database: Structured to store user profiles, educational programs, and application submissions.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Instructions for Running the Project
+Clone the github repository 
+Install Dependencies
+*Setup Firebase*
+Start/Deploy the Application
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
