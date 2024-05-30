@@ -1,4 +1,4 @@
-![Homepage Screenshot](src/assets/img/icon.png)
+<img src="src/assets/img/icon.png" alt="Homepage Screenshot" width="200">
 # CareerPath
 Description
 CareerPath is an online platform that facilitates connections between students, educational institutions, and companies. Users can follow available educational programs and career opportunities, gaining insights into career development paths.
@@ -30,8 +30,8 @@ Firebase Integration: Real-time database and authentication services to manage u
 Firestore Database: Structured to store user profiles, educational programs, and application submissions.
 
 ## Instructions for Running the Project
-Clone the github repository 
-Install Dependencies
+->Clone the github repository 
+->Install Dependencies
 *Setup Firebase*
-Start/Deploy the Application
+-->Start/Deploy the Application
 
