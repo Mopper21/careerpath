@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { toggleForm, validateForm } from '../components/ProgramsUtils';
 import { auth, db } from '../firebase-config';
-import { collection, getDoc, doc } from "firebase/firestore"; 
+import { collection, getDocs, getDoc, doc, addDoc, onSnapshot } from "firebase/firestore"; 
 
 function ProgramsSection() {
+  const [programs, setPrograms] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
 
@@ -23,16 +23,58 @@ function ProgramsSection() {
     fetchUserRole();
   }, []);
 
-  const handleApplicationSubmit = (programName) => {
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const programCollection = collection(db, 'program'); // Use 'program' collection
+      
+        const programsSnapshot = await getDocs(programCollection);
+        const programsList = programsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPrograms(programsList);
+        
+     
+        const unsubscribe = onSnapshot(programCollection, (snapshot) => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'removed') {
+              // If a program is removed, reload the page
+              window.location.reload();
+            }
+          });
+        });
+        
+        
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error fetching programs:', error);
+      }
+    };
+    
+    fetchPrograms();
+  }, []);
+  
+
+  const handleApplicationSubmit = async (programName) => {
     if (userRole !== 'student') {
       alert('Only students can apply for programs.');
       return;
     }
 
     if (window.confirm('Are you sure you want to apply for this program?')) {
-      validateForm(userEmail, programName);
+      try {
+      
+        await addDoc(collection(db, 'application'), {
+          userEmail,
+          programName,
+          applicationDate: new Date().toISOString()
+        });
+        alert('Application submitted successfully!');
+      } catch (error) {
+        console.error('Error submitting application:', error);
+        alert('Failed to submit application. Please try again.');
+      }
     }
   };
+
 
   return (
     <main id="main">
@@ -44,50 +86,18 @@ function ProgramsSection() {
           </div>
 
           <div className="row">
-            <div className="col-lg-6">
-              <h3 className="programs-title">Introduction to Programming</h3>
-              <div className="programs-item">
-                <p>Description: Learn the basics of programming languages such as Python, C++, JavaScript, and Java. Explore fundamental concepts like variables, loops, objects and functions.</p>
-                <p>Application Deadline: June 30, 2024</p>
-                <button className="btn btn-primary" onClick={() => handleApplicationSubmit('Introduction to Programming')}>Apply Now</button>
+            {programs.map(program => (
+              <div className="col-lg-6" key={program.id}>
+                <h3 className="programs-title">{program.programName}</h3>
+                <div className="programs-item">
+                  <p><strong>Description:</strong> {program.description}</p>
+                  <p><strong>Application Deadline:</strong> {program.deadline}</p>
+                  <button className="btn btn-primary" onClick={() => handleApplicationSubmit(program.programName)}>Apply Now</button>
+                </div>
               </div>
-            </div>
-
-            <div className="col-lg-6">
-              <h3 className="programs-title">Digital Marketing Certification</h3>
-              <div className="programs-item">
-                <p>Description: Gain expertise in digital marketing strategies, including SEO, social media marketing, email marketing, and content creation. Learn to analyze marketing data and optimize campaigns.</p>
-                <p>Application Deadline: July 15, 2024</p>
-                <button className="btn btn-primary" onClick={() => handleApplicationSubmit('Digital Marketing Certification')}>Apply Now</button>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <h3 className="programs-title">Financial Literacy Workshop</h3>
-              <div className="programs-item">
-                <p>Description: Understand the principles of personal finance, budgeting, investing, and retirement planning. Learn how to manage debt, build credit, and achieve financial goals.</p>
-                <p>Application Deadline: August 10, 2024</p>
-                <button className="btn btn-primary" onClick={() => handleApplicationSubmit('Financial Literacy Workshop')}>Apply Now</button>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <h3 className="programs-title">Graphic Design Bootcamp</h3>
-              <div className="programs-item">
-                <p>Description: Develop skills in graphic design software like Adobe Photoshop, Illustrator, and InDesign. Learn design principles, typography, color theory, and digital illustration techniques.</p>
-                <p>Application Deadline: September 5, 2024</p>
-                <button className="btn btn-primary" onClick={() => handleApplicationSubmit('Graphic Design Bootcamp')}>Apply Now</button>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <h3 className="programs-title">Data Science Fundamentals</h3>
-              <div className="programs-item">
-                <p>Description: Dive into the world of data science and analytics. Explore data visualization, statistical analysis, machine learning, and predictive modeling using tools like Python and R.</p>
-                <p>Application Deadline: October 1, 2024</p>
-                <button className="btn btn-primary" onClick={() => handleApplicationSubmit('Data Science Fundamentals')}>Apply Now</button>
-              </div>
-            </div>
+            ))}
+      
+       
           </div>
         </div>
       </section>

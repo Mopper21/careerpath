@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { auth, db, provider } from "../firebase-config"; 
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { auth, db, provider } from "../firebase-config";
 
 function AuthPage({ updateUser }) {
   const [email, setEmail] = useState("");
@@ -11,8 +12,14 @@ function AuthPage({ updateUser }) {
   const [loginPassword, setLoginPassword] = useState("");
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSignUp = async () => {
+    if (!email || !password || !userType) {
+      setErrorMessage("Please fill in all fields and select a user type.");
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -20,22 +27,36 @@ function AuthPage({ updateUser }) {
       setUser(user);
       updateUser(user);
       setSuccessMessage("Registration successful!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/"); // Redirect to HomePage
+      }, 1000);
     } catch (error) {
       console.error(error.message);
+      setErrorMessage("Registration failed. Please try again.");
     }
   };
 
   const handleSignIn = async () => {
+    if (!loginEmail || !loginPassword) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const user = userCredential.user;
       setUser(user);
       updateUser(user);
       setSuccessMessage("Sign-in successful!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/"); // Redirect to HomePage
+      }, 1000);
     } catch (error) {
       console.error(error.message);
+      setErrorMessage("Sign-in failed. Please try again.");
     }
   };
 
@@ -47,9 +68,14 @@ function AuthPage({ updateUser }) {
       setUser(user);
       updateUser(user);
       setSuccessMessage("Google sign-in successful!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        navigate("/"); // Redirect to HomePage
+      }, 1000);
     } catch (error) {
       console.error(error.message);
+      setErrorMessage("Google sign-in failed. Please try again.");
     }
   };
 
@@ -71,6 +97,7 @@ function AuthPage({ updateUser }) {
         <div className="col-md-6">
           <h2 className="text-center mb-4">CareerPath - Sign Up / Login</h2>
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
+          {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           
           {/* Sign Up Form */}
           <form>
@@ -94,11 +121,13 @@ function AuthPage({ updateUser }) {
             </div>
             <div className="auth-form-group form-group">
               <label htmlFor="user-type">Choose Role:</label>
-              <select id="user-type" 
+              <select 
+                id="user-type" 
                 className="form-control" 
                 value={userType} 
                 onChange={(e) => setUserType(e.target.value)}
               >
+                <option value="">Select Role</option>
                 <option value="student">Student</option>
                 <option value="company">Company</option>
                 <option value="educational-institution">Educational Institution</option>

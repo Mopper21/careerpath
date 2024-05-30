@@ -9,6 +9,7 @@ import ProgramsSection from './pages/Programs';
 import JobOpportunities from './pages/CareerPathsPage';
 import ConnectionsSection from './pages/Connections';
 import AdviceSection from './pages/Tips';
+import ProfilePage from './pages/ProfilePage';
 import React, { useState } from 'react';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/paths" element={<JobOpportunities />} />
         <Route path="/connections" element={<ConnectionsSection />} />
         <Route path="/tips" element={<AdviceSection />} />
+        <Route path="/profile" element={<ProfilePage user={user} handleSignOut={handleSignOut} />} />
       </Routes>
       <Footer />
     </Router>
