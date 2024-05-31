@@ -1,11 +1,17 @@
+// ProfilePage.jsx
 import React from 'react';
 import ProfilePageLogic from '../components/ProfilePageLogic';
 import ProgramPromotionForm from '../components/ProgramPromotionForm';
 import JobPostingForm from '../components/JobPostingForm';
-
+import JobOpportunities from './CareerPathsPage';
+import ProgramsSection from './Programs';
 
 function ProfilePage({ user, handleSignOut }) {
-  const { name, dateOfBirth, userRole, profilePicture, loading, selectedFileName, handleFileChange, handleSave, handleInputChange, fileInputRef } = ProfilePageLogic({ user, handleSignOut });
+  const { 
+    name, dateOfBirth, userRole, profilePicture, 
+    loading, selectedFileName, handleFileChange, 
+    handleSave, handleInputChange, fileInputRef 
+  } = ProfilePageLogic({ user, handleSignOut });
 
   return (
     <main id="main">
@@ -81,15 +87,16 @@ function ProfilePage({ user, handleSignOut }) {
                     <div className="mb-3">
                       <h3>Post Job Opportunity</h3>
                       <JobPostingForm />
-                      </div>
+                      <JobOpportunities />
+                    </div>
                   )}
                   {userRole === 'educational-institution' && (
                     <div className="mb-3">
                       <h3>Promote a New Program</h3>
-                      <ProgramPromotionForm initialUserName={name} />
+                      <ProgramPromotionForm />
+                      <ProgramsSection />
                     </div>
                   )}
-                
                 </div>
               </div>
             </div>
@@ -103,4 +110,3 @@ function ProfilePage({ user, handleSignOut }) {
 }
 
 export default ProfilePage;
-

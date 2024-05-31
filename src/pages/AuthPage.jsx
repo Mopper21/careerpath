@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { auth, db, provider } from "../firebase-config";
 
 function AuthPage({ updateUser }) {
@@ -13,7 +13,7 @@ function AuthPage({ updateUser }) {
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
     if (!email || !password || !userType) {
@@ -23,14 +23,14 @@ function AuthPage({ updateUser }) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      await setDoc(doc(db, "users", user.uid), { email: user.email, role: userType });
+      await setDoc(doc(db, "users", user.uid), { email: user.email, role: userType, userId: user.uid });
       setUser(user);
       updateUser(user);
       setSuccessMessage("Registration successful!");
       setErrorMessage("");
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/"); // Redirect to HomePage
+        navigate("/");
       }, 1000);
     } catch (error) {
       console.error(error.message);
@@ -52,7 +52,7 @@ function AuthPage({ updateUser }) {
       setErrorMessage("");
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/"); // Redirect to HomePage
+        navigate("/");
       }, 1000);
     } catch (error) {
       console.error(error.message);
@@ -64,14 +64,14 @@ function AuthPage({ updateUser }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      await setDoc(doc(db, "users", user.uid), { email: user.email, role: "google-user" });
+      await setDoc(doc(db, "users", user.uid), { email: user.email, role: "google-user", userId: user.uid });
       setUser(user);
       updateUser(user);
       setSuccessMessage("Google sign-in successful!");
       setErrorMessage("");
       setTimeout(() => {
         setSuccessMessage("");
-        navigate("/"); // Redirect to HomePage
+        navigate("/");
       }, 1000);
     } catch (error) {
       console.error(error.message);
@@ -99,7 +99,6 @@ function AuthPage({ updateUser }) {
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           
-          {/* Sign Up Form */}
           <form>
             <div className="mb-3">
               <input 
@@ -143,7 +142,6 @@ function AuthPage({ updateUser }) {
             </button>
           </form>
           
-          {/* Sign In Form */}
           <form>
             <div className="mb-3">
               <input 
@@ -173,7 +171,6 @@ function AuthPage({ updateUser }) {
             </button>
           </form>
           
-          {/* Sign in with Google */}
           <button 
             type="button" 
             className="btn btn-primary btn-block mb-3" 
@@ -183,7 +180,6 @@ function AuthPage({ updateUser }) {
             Sign Up/In with Google
           </button>
 
-          {/* User Info */}
           {user && (
             <div id="user-info" className="mt-4">
               <h4>User Logged In:</h4>

@@ -1,3 +1,4 @@
+//ProgramPromotionForm.jsx
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase-config';
 import { addDoc, collection } from 'firebase/firestore';
@@ -9,6 +10,7 @@ const ProgramPromotionForm = ({ initialUserName }) => {
   const [userName, setUserName] = useState(initialUserName);
   const [submissionDate, setSubmissionDate] = useState('');
   const [deadline, setDeadline] = useState('');
+  
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -23,7 +25,7 @@ const ProgramPromotionForm = ({ initialUserName }) => {
         programName,
         description,
         submissionDate,
-        deadline // Include deadline in the document
+        deadline,
       });
       alert('New program added successfully!');
       // Clear form fields after submission
