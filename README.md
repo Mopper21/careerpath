@@ -1,6 +1,7 @@
 <img src="src/assets/img/icon.png" alt="Homepage Screenshot" width="200">
+
 # CareerPath
-Description
+## Description
 CareerPath is an online platform that facilitates connections between students, educational institutions, and companies. Users can follow available educational programs and career opportunities, gaining insights into career development paths.
 
 ## Users
