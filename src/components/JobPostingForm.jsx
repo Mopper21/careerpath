@@ -1,117 +1,77 @@
 import React, { useState, useEffect } from 'react';
-import { addDoc, collection, doc, updateDoc, deleteDoc, getDocs, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase-config';
+import { db } from '../firebase-config';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 
-const JobPostingForm = () => {
-  const [title, setTitle] = useState('');
+const JobPostingForm = ({ initialUserName }) => {
+  const [jobName, setJobName] = useState('');
   const [description, setDescription] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [jobPostings, setJobPostings] = useState([]);
-  const [userRole, setUserRole] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [submissionDate, setSubmissionDate] = useState('');
+  const [jobId, setJobId] = useState(null);
 
   useEffect(() => {
-    const fetchUserRole = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserRole(userData.role);
-          setUserId(user.uid);
-        }
-      }
-    };
-
-    fetchUserRole();
+    const today = new Date().toISOString().split('T')[0];
+    setSubmissionDate(today);
   }, []);
 
-  useEffect(() => {
-    const fetchJobPostings = async () => {
-      try {
-        const jobCollection = collection(db, 'Job Opening');
-        const jobSnapshot = await getDocs(jobCollection);
-        const jobList = jobSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setJobPostings(jobList);
-      } catch (error) {
-        console.error('Error fetching job postings:', error);
-      }
-    };
-
-    fetchJobPostings();
-  }, []);
-
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = auth.currentUser;
-      await addDoc(collection(db, 'Job Opening'), {
-        title,
+      // Add the new job to Firestore
+      const docRef = await addDoc(collection(db, 'jobPostings'), {
+        jobName,
         description,
-        companyName,
-        userId: user.uid
+        submissionDate,
       });
-      alert('Job posting added successfully!');
-      setTitle('');
+
+      // Get the document ID and update the document with the jobId
+      const id = docRef.id;
+      await updateDoc(doc(db, 'jobPostings', id), { jobId: id });
+
+      alert('New job added successfully!');
+      // Clear form fields after submission
+      setJobName('');
       setDescription('');
-      setCompanyName('');
+      setJobId(id);
     } catch (error) {
-      console.error('Error adding job posting:', error);
-      alert('Failed to add job posting. Please try again.');
-    }
-  };
-
-  const handleDeleteJobPosting = async (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job posting?')) {
-      try {
-        await deleteDoc(doc(db, 'Job Opening', jobId));
-        alert('Job posting deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting job posting:', error);
-        alert('Failed to delete job posting. Please try again.');
-      }
-    }
-  };
-
-  const handleEditJobPosting = async (jobId, updatedJob) => {
-    try {
-      await updateDoc(doc(db, 'Job Opening', jobId), updatedJob);
-      alert('Job posting updated successfully!');
-    } catch (error) {
-      console.error('Error updating job posting:', error);
-      alert('Failed to update job posting. Please try again.');
+      console.error('Error adding new job:', error);
+      alert('Failed to add new job. Please try again.');
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Job Title:</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        </div>
-        <div>
-          <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
-        </div>
-        <div>
-          <label>Company Name:</label>
-          <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
-        </div>
-        <button type="submit">Add Job Posting</button>
-      </form>
-      <div>
-        <h3>Your Job Postings</h3>
-        {jobPostings.filter(job => job.userId === userId).map(job => (
-          <div key={job.id}>
-            <h4>{job.title}</h4>
-            <p>{job.description}</p>
-            <button onClick={() => handleEditJobPosting(job.id, { ...job, title: 'Updated Job Title' })}>Edit</button>
-            <button onClick={() => handleDeleteJobPosting(job.id)}>Delete</button>
-          </div>
-        ))}
+    <form onSubmit={handleFormSubmit}>
+      <div className="mb-3">
+        <label htmlFor="jobName" className="form-label">Job Name</label>
+        <input
+          type="text"
+          id="jobName"
+          className="form-control"
+          value={jobName}
+          onChange={(e) => setJobName(e.target.value)}
+        />
       </div>
-    </div>
+      <div className="mb-3">
+        <label htmlFor="description" className="form-label">Description</label>
+        <textarea
+          id="description"
+          className="form-control"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="submissionDate" className="form-label">Submission Date</label>
+        <input
+          type="date"
+          id="submissionDate"
+          className="form-control"
+          value={submissionDate}
+          readOnly
+        />
+      </div>
+      
+      <button type="submit" className="btn btn-primary">Submit</button>
+    </form>
   );
 };
 

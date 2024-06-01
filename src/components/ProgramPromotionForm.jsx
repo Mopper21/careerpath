@@ -1,16 +1,13 @@
-//ProgramPromotionForm.jsx
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase-config';
-import { addDoc, collection } from 'firebase/firestore';
-
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 
 const ProgramPromotionForm = ({ initialUserName }) => {
   const [programName, setProgramName] = useState('');
   const [description, setDescription] = useState('');
-  const [userName, setUserName] = useState(initialUserName);
   const [submissionDate, setSubmissionDate] = useState('');
   const [deadline, setDeadline] = useState('');
-  
+  const [programId, setProgramId] = useState(null);
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -20,19 +17,24 @@ const ProgramPromotionForm = ({ initialUserName }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Submit program promotion details to Firestore
-      await addDoc(collection(db, 'program'), { // Save to 'program' collection
+      // Add the new program to Firestore
+      const docRef = await addDoc(collection(db, 'program'), {
         programName,
         description,
         submissionDate,
-        deadline,
+        deadline
       });
+
+      // Get the document ID and update the document with the programId
+      const id = docRef.id;
+      await updateDoc(doc(db, 'program', id), { programId: id });
+
       alert('New program added successfully!');
       // Clear form fields after submission
       setProgramName('');
       setDescription('');
-      setUserName('');
       setDeadline('');
+      setProgramId(id);
     } catch (error) {
       console.error('Error adding new program:', error);
       alert('Failed to add new program. Please try again.');

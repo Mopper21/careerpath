@@ -1,4 +1,3 @@
-// ProfilePage.jsx
 import React from 'react';
 import ProfilePageLogic from '../components/ProfilePageLogic';
 import ProgramPromotionForm from '../components/ProgramPromotionForm';

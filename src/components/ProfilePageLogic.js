@@ -1,4 +1,3 @@
-//ProfilePageLogic.js
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase-config';
@@ -16,6 +15,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
   const storage = getStorage(); 
   const fileInputRef = useRef(null);
 
+  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
@@ -41,6 +41,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
     fetchUserData();
   }, [user, navigate]);
 
+  // Handle file change for profile picture
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && user) {
@@ -57,6 +58,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
     }
   };
 
+  // Handle input changes for name and date of birth
   const handleInputChange = (field, value) => {
     if (field === 'name') {
       setName(value);
@@ -65,6 +67,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
     }
   };
 
+  // Handle save profile changes
   const handleSave = async () => {
     if (user) {
       try {
