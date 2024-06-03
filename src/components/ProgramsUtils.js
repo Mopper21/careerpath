@@ -21,7 +21,7 @@ const validateForm = async (userEmail, programName) => {
       email: userEmail,
       programName: programName,
       timestamp: new Date(),
-      userId: user.uid // Include user ID in the application document
+      userId: user.uid 
     });
 
     alert('You have successfully applied for the program!');

@@ -1,77 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 
-const JobPostingForm = ({ initialUserName }) => {
-  const [jobName, setJobName] = useState('');
+const JobPostingForm = ({ user, updateSubmittedCompany }) => {
   const [description, setDescription] = useState('');
-  const [submissionDate, setSubmissionDate] = useState('');
-  const [jobId, setJobId] = useState(null);
+  const [companyName, setCompanyName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    setSubmissionDate(today);
-  }, []);
-
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
-      // Add the new job to Firestore
       const docRef = await addDoc(collection(db, 'jobPostings'), {
-        jobName,
         description,
-        submissionDate,
+        companyName,
+        userId: user.uid,
+        createdAt: new Date()
       });
-
-      // Get the document ID and update the document with the jobId
-      const id = docRef.id;
-      await updateDoc(doc(db, 'jobPostings', id), { jobId: id });
-
-      alert('New job added successfully!');
-      // Clear form fields after submission
-      setJobName('');
-      setDescription('');
-      setJobId(id);
+      alert('Job posting submitted successfully!');
+      updateSubmittedCompany({
+        id: docRef.id,
+        description,
+        companyName
+      });
     } catch (error) {
-      console.error('Error adding new job:', error);
-      alert('Failed to add new job. Please try again.');
+      console.error('Error submitting job posting:', error);
     }
+    
+    // Clear the form fields regardless of whether there was an error or not
+    setIsLoading(false);
+    setDescription('');
+    setCompanyName('');
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <div className="mb-3">
-        <label htmlFor="jobName" className="form-label">Job Name</label>
-        <input
-          type="text"
-          id="jobName"
-          className="form-control"
-          value={jobName}
-          onChange={(e) => setJobName(e.target.value)}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="description" className="form-label">Description</label>
-        <textarea
-          id="description"
-          className="form-control"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="submissionDate" className="form-label">Submission Date</label>
-        <input
-          type="date"
-          id="submissionDate"
-          className="form-control"
-          value={submissionDate}
-          readOnly
-        />
-      </div>
-      
-      <button type="submit" className="btn btn-primary">Submit</button>
-    </form>
+    <div className="container mt-4">
+      <form onSubmit={handleSubmit}>
+
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description</label>
+          <textarea
+            id="description"
+            className="form-control"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="companyName" className="form-label">Company Name</label>
+          <input
+            type="text"
+            id="companyName"
+            className="form-control"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? 'Submitting...' : 'Submit'}
+        </button>
+      </form>
+    </div>
   );
 };
 

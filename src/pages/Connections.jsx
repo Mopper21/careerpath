@@ -1,4 +1,3 @@
-// src/pages/Connections.jsx
 import React from 'react';
 import { handleEmployerSubmit, handleMentorSubmit } from '../components/Connections';
 

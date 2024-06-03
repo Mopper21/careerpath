@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function Header({ user, handleSignOut }) {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <header id="header" className="fixed-top">
       <div className="container-fluid d-flex justify-content-between align-items-center">
         <h1 className="logo me-auto me-lg-0"><Link to="/">CareerPath</Link></h1>
-        <nav id="navbar" className="navbar order-last order-lg-0">
+        <nav id="navbar" className={`navbar ${isMobileMenuOpen ? 'navbar-mobile' : ''}`}>
           <ul>
-            <li className="nav-item"><Link to="/" className="nav-link ">Home</Link></li>
+            <li className="nav-item"><Link to="/" className="nav-link">Home</Link></li>
             <li className="nav-item"><Link to="/about" className="nav-link">About</Link></li>
             <li className="nav-item"><Link to="/programs" className="nav-link">Programs</Link></li>
             <li className="nav-item"><Link to="/paths" className="nav-link">Paths</Link></li>
@@ -25,6 +31,7 @@ function Header({ user, handleSignOut }) {
               )}
             </li>
           </ul>
+          <i className={`bi ${isMobileMenuOpen ? 'bi-x' : 'bi-list'} mobile-nav-toggle`} onClick={toggleMobileMenu}></i>
         </nav>
       </div>
     </header>

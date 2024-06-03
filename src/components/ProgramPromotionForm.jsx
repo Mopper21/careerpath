@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase-config';
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase-config'; // Ensure auth is imported
+import { addDoc, collection, updateDoc, doc } from 'firebase/firestore';
 
 const ProgramPromotionForm = ({ initialUserName }) => {
   const [programName, setProgramName] = useState('');
@@ -17,12 +17,19 @@ const ProgramPromotionForm = ({ initialUserName }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
+      const user = auth.currentUser;
+      if (!user) {
+        alert('You must be logged in to add a program.');
+        return;
+      }
+
       // Add the new program to Firestore
       const docRef = await addDoc(collection(db, 'program'), {
         programName,
         description,
         submissionDate,
-        deadline
+        deadline,
+        creatorId: user.uid, // Store the creator's ID
       });
 
       // Get the document ID and update the document with the programId
@@ -43,6 +50,7 @@ const ProgramPromotionForm = ({ initialUserName }) => {
 
   return (
     <form onSubmit={handleFormSubmit}>
+       <h3>Add a Program</h3>
       <div className="mb-3">
         <label htmlFor="programName" className="form-label">Program Name</label>
         <input

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase-config';
-import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore"; 
+import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import ProgramEditForm from '../components/ProgramEditForm';
 
 function ProgramsSection() {
@@ -8,26 +8,28 @@ function ProgramsSection() {
   const [userRole, setUserRole] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [editingProgramId, setEditingProgramId] = useState(null); // State to track editing program
+  const [editingProgramId, setEditingProgramId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserRole = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUserRole(userData.role);
-          setUserEmail(user.email);
-          setUserId(user.uid);
+    const fetchUserData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUserRole(userData.role);
+            setUserEmail(user.email);
+            setUserId(user.uid);
+          }
         }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchUserRole();
-  }, []);
-
-  useEffect(() => {
     const fetchPrograms = async () => {
       try {
         const programCollection = collection(db, 'program');
@@ -50,9 +52,13 @@ function ProgramsSection() {
         return () => unsubscribe();
       } catch (error) {
         console.error('Error fetching programs:', error);
+        setError('Failed to load programs. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
 
+    fetchUserData();
     fetchPrograms();
   }, []);
 
@@ -67,7 +73,7 @@ function ProgramsSection() {
         await addDoc(collection(db, 'application'), {
           userEmail,
           programName,
-          applicationDate: new Date().toISOString()
+          applicationDate: new Date().toISOString(),
         });
         alert('Application submitted successfully!');
       } catch (error) {
@@ -106,6 +112,14 @@ function ProgramsSection() {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <main id="main">
       <section id="programs" className="programs">
@@ -123,14 +137,13 @@ function ProgramsSection() {
                   {userRole === 'student' && (
                     <button className="btn btn-primary" onClick={() => handleApplicationSubmit(program.programName)}>Apply Now</button>
                   )}
-                  {userRole === 'educational-institution' && (
+                  {userRole === 'educational-institution' && userId === program.creatorId && (
                     <>
                       <button className="btn btn-warning" onClick={() => handleEditProgram(program.id)}>Edit</button>
                       <button className="btn btn-danger" onClick={() => handleDeleteProgram(program.id)}>Delete</button>
                     </>
                   )}
                 </div>
-                {/* Render the ProgramEditForm only if editingProgramId matches the current program id */}
                 {editingProgramId === program.id && (
                   <ProgramEditForm
                     program={program}

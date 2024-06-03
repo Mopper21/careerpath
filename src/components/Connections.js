@@ -1,4 +1,3 @@
-// src/components/Connections.js
 import { db } from '../firebase-config'; 
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 

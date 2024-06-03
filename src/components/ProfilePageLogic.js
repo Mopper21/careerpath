@@ -1,3 +1,5 @@
+// ProfilePageLogic.js
+
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase-config';
@@ -9,8 +11,8 @@ function ProfilePageLogic({ user, handleSignOut }) {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [userRole, setUserRole] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
-  const [loading, setLoading] = useState(true);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
   const storage = getStorage(); 
   const fileInputRef = useRef(null);
@@ -18,7 +20,8 @@ function ProfilePageLogic({ user, handleSignOut }) {
   // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
-      if (user) {
+      console.log("User:", user); // Add this line to check the value of user
+      if (user && user.uid) {
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
@@ -31,22 +34,24 @@ function ProfilePageLogic({ user, handleSignOut }) {
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
+        } finally {
+          setLoading(false);
         }
       } else {
         navigate('/auth');
       }
-      setLoading(false);
     };
-
+  
     fetchUserData();
   }, [user, navigate]);
+  
 
   // Handle file change for profile picture
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file && user) {
+    if (file && user && user.uid) {
       try {
-        const storageRef = ref(storage, `profilePictures/${user.uid}`);
+        const storageRef = ref(storage, `profilePictures/${user.uid}/${file.name}`);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
         await updateDoc(doc(db, 'users', user.uid), { profilePicture: downloadURL });
@@ -57,6 +62,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
       }
     }
   };
+  
 
   // Handle input changes for name and date of birth
   const handleInputChange = (field, value) => {
@@ -69,7 +75,7 @@ function ProfilePageLogic({ user, handleSignOut }) {
 
   // Handle save profile changes
   const handleSave = async () => {
-    if (user) {
+    if (user && user.uid) {
       try {
         await updateDoc(doc(db, 'users', user.uid), {
           name,
@@ -83,7 +89,19 @@ function ProfilePageLogic({ user, handleSignOut }) {
     }
   };
 
-  return { name, dateOfBirth, userRole, profilePicture, loading, selectedFileName, handleFileChange, handleInputChange, handleSave, fileInputRef };
+  return { 
+    name, 
+    dateOfBirth, 
+    userRole, 
+    profilePicture, 
+    loading, 
+    selectedFileName, 
+    handleFileChange, 
+    handleInputChange, 
+    handleSave, 
+    fileInputRef,
+    handleSignOut
+  };
 }
 
 export default ProfilePageLogic;

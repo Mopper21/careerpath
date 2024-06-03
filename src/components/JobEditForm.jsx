@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-const JobEditForm = ({ job, onSave, onCancel }) => {
+const JobEditForm = ({ job, currentUserId, onSave, onCancel }) => {
   const [updatedJob, setUpdatedJob] = useState({});
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     if (job) {
       setUpdatedJob(job);
+      setIsAuthorized(job.userId === currentUserId);
     }
-  }, [job]);
+  }, [job, currentUserId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,6 +20,10 @@ const JobEditForm = ({ job, onSave, onCancel }) => {
     e.preventDefault();
     onSave(updatedJob);
   };
+
+  if (!isAuthorized) {
+    return <p>You are not authorized to edit this job.</p>;
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -39,6 +45,17 @@ const JobEditForm = ({ job, onSave, onCancel }) => {
           name="description"
           className="form-control"
           value={updatedJob.description || ''}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="companyName" className="form-label">Company Name</label>
+        <input
+          type="text"
+          id="companyName"
+          name="companyName"
+          className="form-control"
+          value={updatedJob.companyName || ''}
           onChange={handleChange}
         />
       </div>
