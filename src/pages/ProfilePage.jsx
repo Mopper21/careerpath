@@ -3,6 +3,8 @@ import ProfilePageLogic from '../components/ProfilePageLogic';
 import ProgramPromotionForm from '../components/ProgramPromotionForm';
 import JobPostingForm from '../components/JobPostingForm';
 import JobEditForm from '../components/JobEditForm';
+import ApplicationsSection from '../components/ApplicationsSection';
+import StudentApplicationsSection from '../components/StudentApplicationsSection'; // Import the new component
 import { collection, deleteDoc, doc, getDocs, query, updateDoc, where, addDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase-config';
 
@@ -18,38 +20,40 @@ function ProfilePage({ user, handleSignOut }) {
     handleSave,
     handleInputChange,
     fileInputRef,
-    
   } = ProfilePageLogic({ user, handleSignOut });
-
-  
 
   const [jobs, setJobs] = useState([]);
   const [currentJob, setCurrentJob] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [programs, setPrograms] = useState([]);
 
   useEffect(() => {
-    if (user && user.uid) { // Add a null check for user and user.uid
+    if (user && user.uid) {
       fetchUserJobs();
     }
   }, [user]);
-  
 
-  useEffect(() => { // Add useEffect for real-time updates
-    const unsubscribe = onSnapshot(query(collection(db, 'jobPostings'), where('userId', '==', user.uid)), (snapshot) => {
-      const userJobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setJobs(userJobs);
-    });
-
-    return () => unsubscribe();
+  useEffect(() => {
+    if (user && user.uid) {
+      const unsubscribe = onSnapshot(
+        query(collection(db, 'jobPostings'), where('userId', '==', user.uid)),
+        (snapshot) => {
+          const userJobs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setJobs(userJobs);
+        }
+      );
+      return () => unsubscribe();
+    }
   }, [user]);
-  
 
   const fetchUserJobs = async () => {
-    const jobsCollection = collection(db, 'jobPostings');
-    const q = query(jobsCollection, where('userId', '==', user.uid));
-    const querySnapshot = await getDocs(q);
-    const userJobs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setJobs(userJobs);
+    if (user && user.uid) {
+      const jobsCollection = collection(db, 'jobPostings');
+      const q = query(jobsCollection, where('userId', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+      const userJobs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setJobs(userJobs);
+    }
   };
 
   const handleEdit = (job) => {
@@ -77,7 +81,6 @@ function ProfilePage({ user, handleSignOut }) {
 
   const handleJobAdded = async () => {
     try {
-      // Add the new job directly to the list
       const newJobRef = await addDoc(collection(db, 'jobPostings'), {
         userId: user.uid,
         jobName: '',
@@ -91,12 +94,16 @@ function ProfilePage({ user, handleSignOut }) {
         description: '',
         companyName: '',
       };
-      setJobs(prevJobs => [newJobData, ...prevJobs]); // Update state with new job
+      setJobs((prevJobs) => [newJobData, ...prevJobs]);
     } catch (error) {
       console.error('Error adding job:', error);
     }
   };
   
+
+  if (!user) {
+    return null; // Render nothing if user is not available
+  }
 
   return (
     <main>
@@ -117,7 +124,7 @@ function ProfilePage({ user, handleSignOut }) {
           />
 
           {userRole === 'educational-institution' && <ProgramPromotionForm />}
-       
+
           {userRole === 'company' && (
             <div className="mb-3">
               <h3>Post Job Opportunity</h3>
@@ -129,25 +136,25 @@ function ProfilePage({ user, handleSignOut }) {
             <div>
               <h3 style={{ marginBottom: '20px' }}>Your Job Postings</h3>
               <div className="job-postings">
-              {isEditing ? (
-                <JobEditForm
-                  job={currentJob}
-                  currentUserId={user.uid}
-                  onSave={handleJobSave}
-                  onCancel={handleCancel}
-                />
-              ) : (
-                <div className="job-list">
-                  {jobs.map((job) => (
-                    <div key={job.id} className="job-item">
-                      <h4>{job.jobName}</h4>
-                      <p>{job.description}</p>
-                      <p><strong>Company:</strong> {job.companyName}</p>
-                      {job.userId === user.uid && (
-                <div className="job-buttons">
-                  <button className="btn btn-primary" onClick={() => handleEdit(job)}>Edit</button>
-                  <button className="btn btn-danger" onClick={() => handleDelete(job.id)}>Delete</button>
-                  </div>
+                {isEditing ? (
+                  <JobEditForm
+                    job={currentJob}
+                    currentUserId={user.uid}
+                    onSave={handleJobSave}
+                    onCancel={handleCancel}
+                  />
+                ) : (
+                  <div className="job-list">
+                    {jobs.map((job) => (
+                      <div key={job.id} className="job-item">
+                        <h4>{job.jobName}</h4>
+                        <p>{job.description}</p>
+                        <p><strong>Company:</strong> {job.companyName}</p>
+                        {job.userId === user.uid && (
+                          <div className="job-buttons">
+                            <button className="btn btn-primary" onClick={() => handleEdit(job)}>Edit</button>
+                            <button className="btn btn-danger" onClick={() => handleDelete(job.id)}>Delete</button>
+                          </div>
                         )}
                       </div>
                     ))}
@@ -155,6 +162,14 @@ function ProfilePage({ user, handleSignOut }) {
                 )}
               </div>
             </div>
+          )}
+          
+          {userRole === 'educational-institution' && (
+            <ApplicationsSection user={user} />
+          )}
+
+          {userRole === 'student' && (
+            <StudentApplicationsSection user={user} />
           )}
         </div>
       </section>
@@ -176,7 +191,7 @@ const ProfileContent = ({
   handleSignOut,
 }) => {
   if (!user) {
-    return null; // Or render a loading indicator or default content
+    return null;
   }
 
   return (
@@ -201,7 +216,7 @@ const ProfileContent = ({
               Save
             </button>
             <button className="btn btn-warning" onClick={handleSignOut}>
-              Logout
+              Sign Out
             </button>
           </div>
         </div>
@@ -212,54 +227,56 @@ const ProfileContent = ({
 
 const ProfilePicture = ({ profilePicture, selectedFileName, handleFileChange, fileInputRef }) => (
   <div className="profile-picture">
-    <img src={profilePicture} alt="Profile" />
-    <div className="custom-file-upload">
-      <button className="btn btn-secondary" onClick={() => fileInputRef.current.click()}>
-        {profilePicture ? 'Change Profile Picture' : 'Upload New Profile Picture'}
-      </button>
-      <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-      {selectedFileName && <p>{selectedFileName}</p>}
-    </div>
+    <img src={profilePicture} alt="Profile" className="rounded-circle img-thumbnail" />
+    <input
+      type="file"
+      onChange={handleFileChange}
+      ref={fileInputRef}
+      style={{ display: 'none' }}
+    />
+    <button className="btn btn-secondary" onClick={() => fileInputRef.current.click()}>
+      {selectedFileName ? 'Change Picture' : 'Upload Picture'}
+    </button>
   </div>
 );
 
-const ProfileDetails = ({ user, name, dateOfBirth, userRole, handleInputChange }) => {
-  if (!user) {
-    return null; // Or render a loading indicator or default content
-  }
-
-  return (
-    <>
-      <div className="mb-3 row">
-        <label htmlFor="email" className="form-label">Email</label>
-        <input type="email" id="email" className="form-control" value={user.email} readOnly />
-      </div>
-      <div className="mb-3 row">
-        <label htmlFor="name" className="form-label">Name</label>
-        <input
-          type="text"
-          id="name"
-          className="form-control"
-          value={name}
-          onChange={(e) => handleInputChange('name', e.target.value)}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
-        <input
-          type="date"
-          id="dateOfBirth"
-          className="form-control"
-          value={dateOfBirth}
-          onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="userRole" className="form-label">User Type</label>
-        <input type="text" id="userRole" className="form-control" value={userRole} readOnly />
-      </div>
-    </>
-  );
-};
+const ProfileDetails = ({ user, name, dateOfBirth, userRole, handleInputChange }) => (
+  <div className="profile-details">
+    <p><strong>Email:</strong> {user.email}</p>
+    <div className="form-group">
+      <label htmlFor="name">Name:</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        value={name}
+        onChange={handleInputChange}
+        className="form-control"
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="dateOfBirth">Date of Birth:</label>
+      <input
+        type="date"
+        id="dateOfBirth"
+        name="dateOfBirth"
+        value={dateOfBirth}
+        onChange={handleInputChange}
+        className="form-control"
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="userRole">User Role:</label>
+      <input
+        type="text"
+        id="userRole"
+        name="userRole"
+        value={userRole}
+        readOnly
+        className="form-control"
+      />
+    </div>
+  </div>
+);
 
 export default ProfilePage;

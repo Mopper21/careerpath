@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore'; // Import doc function
 import { db } from '../firebase-config';
 
 function StudentApplicationsSection({ user }) {
   const [applications, setApplications] = useState([]);
-  
+
   useEffect(() => {
     if (user && user.uid) {
       fetchStudentApplications();
@@ -23,25 +23,31 @@ function StudentApplicationsSection({ user }) {
   };
 
   const handleDeleteApplication = async (applicationId) => {
-    try {
-      await deleteDoc(doc(db, 'application', applicationId));
-      setApplications((prevApplications) => prevApplications.filter(app => app.id !== applicationId));
-      console.log('Application deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting application:', error);
+    if (window.confirm('Are you sure you want to delete this application?')) {
+      try {
+        await deleteDoc(doc(db, 'application', applicationId));
+        alert('Application deleted successfully!');
+        fetchStudentApplications(); // Refresh the list after deletion
+      } catch (error) {
+        console.error('Error deleting application:', error);
+        alert('Failed to delete application. Please try again.');
+      }
     }
   };
 
   return (
-    <div className="student-applications-section">
+    <div className="student-applications-section ">
       <h3>Your Applications</h3>
       {applications.length > 0 ? (
         <ul>
           {applications.map((application) => (
             <li key={application.id}>
+              
               <p><strong>Program Name:</strong> {application.programName}</p>
               <p><strong>Application Date:</strong> {application.applicationDate}</p>
-              <button onClick={() => handleDeleteApplication(application.id)}>Delete</button> {/* Delete button */}
+              <p><strong>Application Status: {/*application.status*/}</strong></p>
+              <p><strong>Application ID:</strong> {application.applicationId}</p>
+              <button className="btn btn-danger" onClick={() => handleDeleteApplication(application.id)}>Delete</button>
             </li>
           ))}
         </ul>

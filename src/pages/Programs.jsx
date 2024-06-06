@@ -11,6 +11,7 @@ function ProgramsSection() {
   const [editingProgramId, setEditingProgramId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [programId, setProgramId] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,6 +37,7 @@ function ProgramsSection() {
         const programsSnapshot = await getDocs(programCollection);
         const programsList = programsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPrograms(programsList);
+        setProgramId(programs.id);
 
         const unsubscribe = onSnapshot(programCollection, (snapshot) => {
           snapshot.docChanges().forEach(change => {
@@ -62,7 +64,7 @@ function ProgramsSection() {
     fetchPrograms();
   }, []);
 
-  const handleApplicationSubmit = async (programName) => {
+  const handleApplicationSubmit = async (programId, programName) => {
     if (userRole !== 'student') {
       alert('Only students can apply for programs.');
       return;
@@ -72,6 +74,8 @@ function ProgramsSection() {
       try {
         await addDoc(collection(db, 'application'), {
           userEmail,
+          userId,
+          programId,
           programName,
           applicationDate: new Date().toISOString(),
         });
@@ -135,7 +139,7 @@ function ProgramsSection() {
                   <p><strong>Description:</strong> {program.description}</p>
                   <p><strong>Application Deadline:</strong> {program.deadline}</p>
                   {userRole === 'student' && (
-                    <button className="btn btn-primary" onClick={() => handleApplicationSubmit(program.programName)}>Apply Now</button>
+                    <button className="btn btn-primary" onClick={() => handleApplicationSubmit(program.id, program.programName)}>Apply Now</button>
                   )}
                   {userRole === 'educational-institution' && userId === program.creatorId && (
                     <>
