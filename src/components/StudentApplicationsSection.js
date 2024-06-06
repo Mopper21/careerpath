@@ -35,18 +35,27 @@ function StudentApplicationsSection({ user }) {
     }
   };
 
+  const getApplicationStatusText = (status) => {
+    switch (status) {
+      case 'confirmed':
+        return 'Confirmed';
+      case 'waiting':
+        return 'Waiting';
+      default:
+        return 'Unknown';
+    }
+  };
+
   return (
-    <div className="student-applications-section ">
+    <div className="student-applications-section">
       <h3>Your Applications</h3>
       {applications.length > 0 ? (
         <ul>
           {applications.map((application) => (
             <li key={application.id}>
-              
               <p><strong>Program Name:</strong> {application.programName}</p>
               <p><strong>Application Date:</strong> {application.applicationDate}</p>
-              <p><strong>Application Status: {/*application.status*/}</strong></p>
-              <p><strong>Application ID:</strong> {application.applicationId}</p>
+              <p><strong>Application Status:</strong> {getApplicationStatusText(application.applicationStatus)}</p>
               <button className="btn btn-danger" onClick={() => handleDeleteApplication(application.id)}>Delete</button>
             </li>
           ))}
