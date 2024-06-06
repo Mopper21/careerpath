@@ -44,7 +44,6 @@ function ProfilePageLogic({ user, handleSignOut }) {
   
     fetchUserData();
   }, [user, navigate]);
-  
 
   // Handle file change for profile picture
   const handleFileChange = async (e) => {
@@ -62,7 +61,6 @@ function ProfilePageLogic({ user, handleSignOut }) {
       }
     }
   };
-  
 
   // Handle input changes for name and date of birth
   const handleInputChange = (field, value) => {
