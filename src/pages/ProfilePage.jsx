@@ -1,9 +1,10 @@
-// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import ProfilePageLogic from '../components/ProfilePageLogic';
 import ProgramPromotionForm from '../components/ProgramPromotionForm';
 import JobPostingForm from '../components/JobPostingForm';
 import JobEditForm from '../components/JobEditForm';
+import ApplicationsSection from '../components/ApplicationsSection';
+import StudentApplicationsSection from '../components/StudentApplicationsSection';
 import { collection, deleteDoc, doc, getDocs, query, updateDoc, where, addDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase-config';
 
@@ -149,6 +150,14 @@ function ProfilePage({ user, handleSignOut }) {
                 )}
               </div>
             </div>
+          )}
+
+{userRole === 'educational-institution' && (
+            <ApplicationsSection user={user} />
+          )}
+
+          {userRole === 'student' && (
+            <StudentApplicationsSection user={user} />
           )}
         </div>
       </section>

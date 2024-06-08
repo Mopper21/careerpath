@@ -1336,6 +1336,63 @@ section {
 
 
 /*--------------------------------------------------------------
+# Student Application Section
+--------------------------------------------------------------*/
+
+.student-applications-section {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.student-applications-section h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.student-applications-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.student-applications-section li {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.student-applications-section p {
+  margin: 5px 0;
+}
+
+.student-applications-section button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.student-applications-section button:hover {
+  background-color: #c82333;
+}
+
+.student-applications-section .no-applications-message {
+  font-style: italic;
+  color: #777;
+}
+
+
+
+/*--------------------------------------------------------------
 # Company Dashboard
 --------------------------------------------------------------*/
 
