@@ -1,3 +1,4 @@
+// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import ProfilePageLogic from '../components/ProfilePageLogic';
 import ProgramPromotionForm from '../components/ProgramPromotionForm';
@@ -12,16 +13,12 @@ function ProfilePage({ user, handleSignOut }) {
     dateOfBirth,
     userRole,
     profilePicture,
-    loading,
     selectedFileName,
     handleFileChange,
     handleSave,
     handleInputChange,
     fileInputRef,
-    
   } = ProfilePageLogic({ user, handleSignOut });
-
-  
 
   const [jobs, setJobs] = useState([]);
   const [currentJob, setCurrentJob] = useState(null);
@@ -32,7 +29,6 @@ function ProfilePage({ user, handleSignOut }) {
       fetchUserJobs();
     }
   }, [user]);
-  
 
   useEffect(() => { // Add useEffect for real-time updates
     const unsubscribe = onSnapshot(query(collection(db, 'jobPostings'), where('userId', '==', user.uid)), (snapshot) => {
@@ -42,7 +38,6 @@ function ProfilePage({ user, handleSignOut }) {
 
     return () => unsubscribe();
   }, [user]);
-  
 
   const fetchUserJobs = async () => {
     const jobsCollection = collection(db, 'jobPostings');
@@ -96,7 +91,6 @@ function ProfilePage({ user, handleSignOut }) {
       console.error('Error adding job:', error);
     }
   };
-  
 
   return (
     <main>
@@ -199,9 +193,6 @@ const ProfileContent = ({
           <div className="d-flex justify-content-between">
             <button className="btn btn-primary" onClick={handleSave}>
               Save
-            </button>
-            <button className="btn btn-warning" onClick={handleSignOut}>
-              Logout
             </button>
           </div>
         </div>

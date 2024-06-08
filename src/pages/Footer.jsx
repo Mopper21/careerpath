@@ -5,7 +5,7 @@ function Footer() {
     <footer id="footer">
       <div className="containerr">
         <div className="copyright">
-          &copy; Copyright <strong><span></span></strong>. All Rights Reserved
+          &copy; Copyright <strong><span></span></strong>. All Rights Reserved. 
         </div>
        
       </div>

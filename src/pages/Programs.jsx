@@ -113,11 +113,11 @@ function ProgramsSection() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="error">{error}</div>;
   }
 
   return (
@@ -126,23 +126,29 @@ function ProgramsSection() {
         <div className="container" data-aos="fade-up">
           <div className="section-title">
             <h2>Programs</h2>
+            <p>Welcome to our programs section! Explore the diverse range of programs we offer below.</p>
+
           </div>
           <div className="row">
             {programs.map(program => (
               <div className="col-lg-6" key={program.id}>
-                <h3 className="programs-title">{program.programName}</h3>
-                <div className="programs-item">
-                  <p><strong>Description:</strong> {program.description}</p>
-                  <p><strong>Application Deadline:</strong> {program.deadline}</p>
-                  {userRole === 'student' && (
-                    <button className="btn btn-primary" onClick={() => handleApplicationSubmit(program.programName)}>Apply Now</button>
-                  )}
-                  {userRole === 'educational-institution' && userId === program.creatorId && (
-                    <>
-                      <button className="btn btn-warning" onClick={() => handleEditProgram(program.id)}>Edit</button>
-                      <button className="btn btn-danger" onClick={() => handleDeleteProgram(program.id)}>Delete</button>
-                    </>
-                  )}
+                <div className="icon-box" data-aos="fade-up" data-aos-delay="100">
+                  <div className="icon"><i className="bi bi-laptop"></i></div>
+                  <div className="content">
+                    <h3 className="programs-title">{program.programName}</h3>
+                    <p><strong>Description:</strong> {program.description}</p>
+                    <p><strong>Application Deadline:</strong> {program.deadline}</p>
+                    {userRole === 'student' && (
+                      <button className="apply-button" onClick={() => handleApplicationSubmit(program.programName)}>Apply Now</button>
+
+                    )}
+                    {userRole === 'educational-institution' && userId === program.creatorId && (
+                      <>
+                        <button className="btn btn-warning" onClick={() => handleEditProgram(program.id)}>Edit</button>
+                        <button className="btn btn-danger" onClick={() => handleDeleteProgram(program.id)}>Delete</button>
+                      </>
+                    )}
+                  </div>
                 </div>
                 {editingProgramId === program.id && (
                   <ProgramEditForm
