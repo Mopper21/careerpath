@@ -1,0 +1,23 @@
+CareerPath
+
+CareerPath je spletna platforma, ki povezuje študente, izobraževalne ustanove in podjetja za spodbujanje kariernega razvoja.
+
+Leto izdelave: 2024
+
+Avtor1 Goneva
+Avtor2 Mati
+
+Domača stran: https://careerpath-d51e8.web.app/
+Vir podatkov: https://careerpath-d51e8-default-rtdb.europe-west1.firebasedatabase.app
+Koda: https://github.com/Mopper21/careerpath.git
+
+Kategorizacija: spletna aplikacija, predstavitvena spletna stran
+
+Oznake: OdprtiPodatki, ReactJS, NodeJS, Python, AgilenRazvoj, GitHub, UporabaAI...
+
+Opis:
+CareerPath je inovativna spletna platforma, zasnovana za povezovanje študentov, izobraževalnih ustanov in podjetij, s ciljem spodbujanja kariernega razvoja. Platforma študentom omogoča raziskovanje kariernih priložnosti in pridobivanje nasvetov za uspešno načrtovanje kariere. Izobraževalnim ustanovam omogoča predstavitev svojih programov, podjetjem pa nudi priložnost za iskanje novih talentov in promocijo zaposlitvenih možnosti.
+
+Uporabniki lahko enostavno ustvarijo profile, kjer predstavijo svoje dosežke, spretnosti in cilje. Platforma vključuje funkcionalnosti za mreženje, ki omogočajo povezovanje študentov s potencialnimi delodajalci in mentorji. Poleg tega ponuja nasvete o iskanju zaposlitve, prijavah na izobraževalne programe in drugih ključnih vidikih kariernega razvoja.
+
+Uporabniški vmesnik je zgrajen s pomočjo Reacta, kar omogoča interaktivno in odzivno oblikovanje. Zadnje storitve upravlja Firebase, ki vključuje avtentikacijo, shranjevanje podatkov v Firestore, shranjevanje uporabniških slik in gostovanje spletne aplikacije.

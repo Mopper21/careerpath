@@ -39,21 +39,21 @@ function StudentApplicationsSection({ user }) {
     switch (status) {
       case 'confirmed':
         return 'Confirmed';
-      case 'waiting':
-        return 'Waiting';
+      case 'declined':
+        return 'Declined';
       default:
-        return 'Unknown';
+        return 'Waiting...';
     }
   };
 
   const formatApplicationDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // or use date.toLocaleString() for more detailed format
+    return date.toLocaleDateString(); 
   };
 
   return (
     <div className="student-applications-section">
-      <h3>Your Applications</h3>
+      <h3>Your Program's Applications</h3>
       {applications.length > 0 ? (
         <ul>
           {applications.map((application) => (
