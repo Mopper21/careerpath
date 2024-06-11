@@ -78,6 +78,7 @@ function ProgramsSection() {
           programId,
           programName,
           applicationDate: new Date().toISOString(),
+          status: 'Waiting for approval',
         });
         alert('Application submitted successfully!');
       } catch (error) {

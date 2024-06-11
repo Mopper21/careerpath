@@ -35,16 +35,7 @@ function StudentApplicationsSection({ user }) {
     }
   };
 
-  const getApplicationStatusText = (status) => {
-    switch (status) {
-      case 'confirmed':
-        return 'Confirmed';
-      case 'declined':
-        return 'Declined';
-      default:
-        return 'Waiting...';
-    }
-  };
+  
 
   const formatApplicationDate = (dateString) => {
     const date = new Date(dateString);
@@ -60,7 +51,7 @@ function StudentApplicationsSection({ user }) {
             <li key={application.id}>
               <p><strong>Program Name:</strong> {application.programName}</p>
               <p><strong>Application Date:</strong> {formatApplicationDate(application.applicationDate)}</p>
-              <p><strong>Application Status:</strong> {getApplicationStatusText(application.applicationStatus)}</p>
+              <p><strong>Application Status:</strong>{application.status}</p>
               <button className="btn btn-danger" onClick={() => handleDeleteApplication(application.id)}>Delete Application</button>
             </li>
           ))}
